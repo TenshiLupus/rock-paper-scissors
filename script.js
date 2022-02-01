@@ -1,7 +1,9 @@
-function computerPlay(){
-    randomNumber = getRandomIntInclusive(1,3);
+score = [0, 0];
+
+function computerPlay() {
+    randomNumber = getRandomIntInclusive(1, 3);
     result = "";
-    switch (randomNumber){
+    switch (randomNumber) {
         case 1:
             result = "rock";
             break;
@@ -22,53 +24,95 @@ function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function playerSelection(){
-    playerChoice = prompt("Choose, Rock, Paper or Scissors");
-    return playerChoice;
+function playerSelection(e) {
+    return e.target.value;
 }
 
-function playRound(playerChoice, computerChoice){
+function playRound(playerChoice, computerChoice) {
     
-    winningCondition = winCondition(playerChoice);
-    
-    if (computerChoice === winningCondition){
-        console.log("draw");
+    if (computerChoice === playerChoice) {
+        alert("draw");
+        return;
     }
 
-    if(winningCondition === computerChoice){
-        console.log("You win, " + playerChoice + " beats " + computerChoice);
+    winningCondition = winCondition(playerChoice);
+
+
+    if (winningCondition === computerChoice) {
+        alert("You win, " + playerChoice + " beats " + computerChoice);
         return 2;
     }
 
-    else{
-        console.log("You lose, " + computerChoice  + " beats " + playerChoice);
+    else {
+        alert("You lose, " + computerChoice + " beats " + playerChoice);
         return 1;
     }
 
 }
 
-function winCondition(choice){
-    switch (choice.toLowerCase()){
+function winCondition(choice) {
+    switch (choice.toLowerCase()) {
         case "rock":
-            return "scissors";  
+            return "scissors";
         case "scissors":
-            return "paper";    
+            return "paper";
         case "paper":
             return "rock";
     }
 }
 
-function play(){
-    score = [0,0];
+function play(e) {
     
-    for(i = 0; i < 5; i++){
-        c = computerPlay();
-        p = playerSelection();
-        result = playRound(p,c) === 1 ? score[1] += 1 : score[0] += 1;
+
+
+    c = computerPlay();
+    p = e.target.textContent;
+    result = playRound(p, c);
+    if(result === 1){
+        score[1] += 1;
     }
-    console.log("Computer won " + score[0] + " Player won " + score[1]);
+    if(result === 2){
+        score[0] += 1;
+    }
+    const currentScore = document.querySelector('div');
+    currentScore.textContent = score;
+    alert("Player won " + score[0] + " Computer won " + score[1]);
+
+    for(let i = 0 ; i < score.length; i++){
+        let winner = i === 0 ? 'User' : 'Computer';
+        
+        if(score[i] === 5){
+            alert(`WINNER IS ${winner}`);
+        }
+    }
 
     
 }
 
-play();
+function createInterface(){
+    let paperButton = document.createElement('button');
+    paperButton.textContent = 'paper';
+    document.body.appendChild(paperButton);
+
+    let scissorButton = document.createElement('button');
+    scissorButton.textContent = 'scissors';
+    document.body.appendChild(scissorButton);
+
+    let rockButton = document.createElement('button');
+    rockButton.textContent = 'rock';
+    document.body.appendChild(rockButton);
+    
+    const buttons = document.querySelectorAll('button');
+
+    buttons.forEach(button => button.addEventListener('click', e => play(e)));
+
+}
+
+function createScore(){
+    const scoreBoard = document.createElement('div');
+    scoreBoard.textContent = score;
+    document.body.appendChild(scoreBoard);
+}
+
+createScore();
+createInterface();
